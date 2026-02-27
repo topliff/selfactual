@@ -46,42 +46,32 @@ docker run -d \
   -e CSS_BASE_URL="https://$DOMAIN/" \
   "$CSS_IMAGE"
 
-# ---------- Nginx reverse proxy ----------
-cat > /etc/nginx/sites-available/pods <<'NGINX'
-server {
-    listen 80;
-    server_name DOMAIN_PLACEHOLDER;
-    return 301 https://$host$request_uri;
+# ---------- Nginx reverse proxy (HTTP only — certbot adds SSL later) ----------
+cat > /etc/nginx/sites-available/pods <<NGINX
+map \$http_upgrade \$connection_upgrade {
+    default upgrade;
+    ''      close;
 }
 
 server {
-    listen 443 ssl;
-    server_name DOMAIN_PLACEHOLDER;
-
-    # --- TLS certs (fill in after running certbot) ---
-    ssl_certificate     /etc/letsencrypt/live/DOMAIN_PLACEHOLDER/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/DOMAIN_PLACEHOLDER/privkey.pem;
+    listen 80;
+    server_name $DOMAIN;
 
     location / {
         proxy_pass         http://127.0.0.1:3000;
         proxy_http_version 1.1;
-        proxy_set_header   Host              $host;
-        proxy_set_header   X-Forwarded-Host  $host;
-        proxy_set_header   X-Forwarded-Proto $scheme;
-        proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
-        proxy_set_header   Upgrade           $http_upgrade;
-        proxy_set_header   Connection        "upgrade";
+        proxy_set_header   Host              \$host;
+        proxy_set_header   X-Forwarded-Host  \$host;
+        proxy_set_header   X-Forwarded-Proto \$scheme;
+        proxy_set_header   X-Forwarded-For   \$proxy_add_x_forwarded_for;
+        proxy_set_header   Upgrade           \$http_upgrade;
+        proxy_set_header   Connection        \$connection_upgrade;
     }
 }
 NGINX
 
-# Substitute actual domain into the nginx config
-sed -i "s/DOMAIN_PLACEHOLDER/$DOMAIN/g" /etc/nginx/sites-available/pods
-
 ln -sf /etc/nginx/sites-available/pods /etc/nginx/sites-enabled/pods
 rm -f /etc/nginx/sites-enabled/default
 
-# Nginx will fail to start until certs exist — that's expected.
-# Run certbot after first boot (see ops.md).
 systemctl enable nginx
-systemctl restart nginx || true
+systemctl restart nginx
