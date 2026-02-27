@@ -40,7 +40,7 @@ docker run -d \
   --restart=always \
   -p 3000:3000 \
   -v /srv/css-data:/data \
-  -e CSS_CONFIG=config/file-no-setup.json \
+  -e CSS_CONFIG=config/file.json \
   -e CSS_LOGGING_LEVEL=info \
   -e CSS_BASE_URL="https://vaults.selfactual.ai/" \
   solidproject/community-server:latest

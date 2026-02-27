@@ -18,7 +18,7 @@ Personal data infrastructure built on [Solid Pods](https://solidproject.org/).
 ```
 
 - **EC2**: `t3.small`, Ubuntu 24.04, `us-west-2`
-- **CSS**: `solidproject/community-server` Docker image, `config/file-no-setup.json`, data persisted to `/srv/css-data`
+- **CSS**: `solidproject/community-server` Docker image, `config/file.json`, data persisted to `/srv/css-data`
 - **Nginx**: reverse proxy with TLS termination (Let's Encrypt)
 - **DNS**: A record `vaults.selfactual.ai` → Elastic IP (managed at external DNS provider)
 

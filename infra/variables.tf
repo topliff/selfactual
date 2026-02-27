@@ -18,5 +18,5 @@ variable "instance_type" {
 
 variable "ami" {
   description = "Ubuntu 24.04 LTS AMI in us-west-2 (default is Canonical's)"
-  default     = "ami-0b8c6b923777519db" # Ubuntu 24.04 LTS us-west-2 — verify in console
+  default     = "ami-0e5e1413a3bf2d262" # Ubuntu 24.04 LTS us-west-2 (2026-02-18)
 }
