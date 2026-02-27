@@ -63,7 +63,7 @@ resource "aws_instance" "css" {
   vpc_security_group_ids = [aws_security_group.css.id]
 
   user_data = templatefile("${path.module}/user-data.sh", {
-    domain = var.domain
+    subdomain = "vaults.selfactual.ai"
   })
 
   root_block_device {
@@ -84,19 +84,10 @@ resource "aws_eip" "css" {
 }
 
 # ---------------------------------------------------------------------------
-# Route 53 record — pods.<domain> → EIP
+# DNS: vaults.selfactual.ai is managed outside AWS.
+# After apply, create an A record at your DNS provider:
+#   Name: vaults   Type: A   Value: <public_ip output>
 # ---------------------------------------------------------------------------
-data "aws_route53_zone" "main" {
-  name = var.domain
-}
-
-resource "aws_route53_record" "pods" {
-  zone_id = data.aws_route53_zone.main.zone_id
-  name    = "pods.${var.domain}"
-  type    = "A"
-  ttl     = 300
-  records = [aws_eip.css.public_ip]
-}
 
 # ---------------------------------------------------------------------------
 # Outputs
@@ -109,8 +100,8 @@ output "public_ip" {
   value = aws_eip.css.public_ip
 }
 
-output "pods_url" {
-  value = "https://pods.${var.domain}/"
+output "vaults_url" {
+  value = "https://vaults.selfactual.ai/"
 }
 
 output "ssh_command" {

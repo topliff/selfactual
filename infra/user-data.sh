@@ -2,7 +2,7 @@
 set -eux
 
 # ---------- Config ----------
-DOMAIN="pods.${domain}"
+DOMAIN="${subdomain}"
 CSS_IMAGE="solidproject/community-server:latest"
 DATA_DIR="/srv/css-data"
 

@@ -2,11 +2,6 @@ variable "aws_region" {
   default = "us-west-2"
 }
 
-variable "domain" {
-  description = "Root domain you own (e.g. selfactual.io)"
-  type        = string
-}
-
 variable "my_ip" {
   description = "Your public IP for SSH access (CIDR, e.g. 203.0.113.42/32)"
   type        = string

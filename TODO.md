@@ -2,7 +2,7 @@
 
 ## AWS Console / Manual Steps
 - [ ] Verify or create an EC2 key pair in us-west-2
-- [ ] Confirm Route 53 hosted zone exists for your domain
+- [ ] After deploy: add A record for `vaults.selfactual.ai` → Elastic IP at your DNS provider
 - [ ] Verify the Ubuntu 24.04 AMI ID is current in us-west-2 (check EC2 console)
 - [ ] After deploy: SSH in and run certbot for TLS cert
 - [ ] Set up billing alerts / budget in AWS console

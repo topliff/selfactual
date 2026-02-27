@@ -12,7 +12,7 @@ Nginx won't serve HTTPS until certs exist. After DNS propagates:
 
 ```bash
 sudo apt-get install -y certbot python3-certbot-nginx
-sudo certbot --nginx -d pods.YOUR_DOMAIN --non-interactive --agree-tos -m you@example.com
+sudo certbot --nginx -d vaults.selfactual.ai --non-interactive --agree-tos -m you@example.com
 ```
 
 Certbot auto-renews via a systemd timer. Verify: `sudo certbot renew --dry-run`
@@ -42,7 +42,7 @@ docker run -d \
   -v /srv/css-data:/data \
   -e CSS_CONFIG=config/file-no-setup.json \
   -e CSS_LOGGING_LEVEL=info \
-  -e CSS_BASE_URL="https://pods.YOUR_DOMAIN/" \
+  -e CSS_BASE_URL="https://vaults.selfactual.ai/" \
   solidproject/community-server:latest
 ```
 
