@@ -1,6 +1,8 @@
 # SelfActual — Project Context
 
-This document describes the current state of the SelfActual system as of February 2026. It is intended as a reference for ongoing design conversations.
+This document describes the current state of the SelfActual system as of February 2026. It is intended as a reference for ongoing design conversations and onboarding new contributors.
+
+**Last updated:** 2026-02-27
 
 ## What SelfActual Is
 
@@ -18,15 +20,58 @@ Solid (Social Linked Data) is a W3C-backed specification originally created by T
 - Third-party apps interact with pods over standard HTTP using Solid protocol conventions (LDP, content negotiation, etc.). Apps never store user data themselves — they read/write it from the user's pod with the user's permission.
 - Data in pods is typically represented as RDF (Turtle, JSON-LD, etc.) and can use standard vocabularies (FOAF for profiles, vCard, Schema.org, Activity Streams, etc.).
 
-## What We Built (Current Infrastructure)
+## Current System Status
 
-### Live Environment
+### What's Live and Working
 
-- **URL**: `https://vaults.selfactual.ai/`
-- **Status**: Running, serving the Community Solid Server welcome page over HTTPS
-- **Server**: Community Solid Server (CSS) — the most actively maintained open-source Solid server implementation, written in Node.js
+| Component | Status | Details |
+|-----------|--------|---------|
+| CSS pod server | ✅ Running | `https://vaults.selfactual.ai/` — Community Solid Server over HTTPS |
+| Pod creation | ✅ Working | Users can create accounts and pods via the CSS web UI |
+| Solid-OIDC auth | ✅ Working | Client credentials flow validated for programmatic pod access |
+| Dual-pod structure | ✅ Validated | master/ and sub/ containers created and tested with real RDF data |
+| RDF read/write | ✅ Validated | Star Card assessments, reflections, and metadata round-trip correctly |
+| Master/sub separation | ✅ Validated | Reflection links present in master, absent in sub — trust boundary holds |
+| Access control (default) | ✅ Working | Unauthenticated access returns HTTP 401 |
+| Infrastructure as Code | ✅ Complete | Terraform-managed EC2, security groups, Elastic IP |
+| TLS | ✅ Auto-renewing | Let's Encrypt via certbot |
 
-### Architecture
+### What's Designed but Not Yet Built
+
+| Component | Status | Reference |
+|-----------|--------|-----------|
+| WAC ACLs (explicit) | 📋 Designed | ACL sketch in `pod-resources-sketch.md` — needs implementation and cross-account testing |
+| AST pod write service | 📋 Designed | Data flow and RDF serialization designed, needs code |
+| Atlas (pod-native) | 📋 Planned | Architecture decided, backlog needs rework for pod-native approach |
+| Coaching Mentor app | 💡 Concept | App role and data model defined, not scoped for implementation |
+| Vault Viewer (POC demo) | 📋 Planned | Scope defined, not yet built |
+| Dual-pod auto-provisioning | 📋 Planned | Manual creation works; automated flow on signup not built |
+| Auth0 ↔ Solid-OIDC unification | 📋 Deferred | Using separate auth for apps (Auth0) and pods (CSS built-in) for now |
+
+### Test Pod (Live Data)
+
+A test pod exists with real RDF data written during validation:
+
+```
+https://vaults.selfactual.ai/test_pod/
+├── profile/card                                    # CSS-generated profile (WebID)
+├── master/
+│   ├── assessments/
+│   │   └── starcard                                # Star Card: T78 A65 F82 P71, Connector
+│   ├── reflections/
+│   │   └── strength-reflections/
+│   │       └── thinking                            # Reflection linked to starcard, score 78
+│   ├── context/                                    # (empty, ready for framework doc)
+│   └── provenance/                                 # (empty, ready for write log)
+└── sub/
+    ├── assessments/
+    │   └── starcard                                # Same scores, NO reflection link
+    └── context/                                    # (empty, ready for framework doc)
+```
+
+**WebID:** `https://vaults.selfactual.ai/test_pod/profile/card#me`
+
+## Infrastructure Architecture
 
 ```
 Internet
@@ -102,12 +147,12 @@ Terraform state is local (not in S3). The `.terraform/` directory, state files, 
 - Branch: `main`
 - Local path: `~/Desktop/SelfActualSystem/`
 
-## Dual-Pod Architecture (Designed, Not Yet Implemented)
+## Dual-Pod Architecture
 
-The core product concept requires each user to have **two pods**:
+The core product concept requires each user to have **two pods**. This architecture has been validated against the live CSS instance.
 
 ### Master Pod
-- Contains **all** of the user's data: full profile, preferences, activity history, personal records, etc.
+- Contains **all** of the user's data: full profile, preferences, activity history, reflections, coaching data, etc.
 - Access: locked to the user only (private by default)
 - This is the user's complete personal data store
 
@@ -116,34 +161,57 @@ The core product concept requires each user to have **two pods**:
 - Access: the user grants read permissions to specific authorized applications
 - Acts as a controlled sharing layer — apps never touch the master pod
 
-### Open Design Questions
+### Key Design Decisions (Resolved)
 
-1. **Pod schemas**: What resources and containers live in each pod? What vocabularies/ontologies do we use?
-2. **Provisioning flow**: When a user signs up, how do we automatically create both pods? (CSS API, custom registration flow, or a wrapper service?)
-3. **Access control model**: How exactly does the user control what goes into the sub pod? Is it a UI toggle per data type? Per resource?
-4. **Data sync mechanism**: How does data flow from master to sub? Options:
-   - Push on change (master pod write triggers a copy to sub pod)
-   - User-triggered (explicit "share this" action)
-   - Linked resources (sub pod contains references/links to master pod resources, with appropriate ACLs)
-   - Derived views (sub pod is a computed projection of master pod data)
-5. **Authentication flow**: Use CSS's built-in Solid-OIDC identity provider, or integrate an external OIDC provider?
-6. **Demo scenario**: What does the demo look like? A 3rd-party app reading from the sub pod while master stays private.
+| Decision | Resolution |
+|----------|------------|
+| **Pod schemas** | Designed — container layouts, RDF resources, and Turtle examples in `pod-resources-sketch.md` |
+| **Data sync: master → sub** | Push at write time. Data producers write to both pods in a single operation, stripping private data (reflection links) from the sub copy |
+| **What goes where** | Assessments + framework context → both pods. Reflections, coaching data, personal insights → master only. "Working With Me" doc → sub pod (after user review) |
+| **Authentication for apps** | Shared Auth0 tenant — one tenant, multiple apps, single user identity |
+| **Authentication for pods** | CSS built-in Solid-OIDC with client credentials. Auth0 ↔ Solid-OIDC unification deferred to post-POC |
+| **Atlas architecture** | Pod-native — no separate database, reads/writes directly to pods |
+| **AST architecture** | Middle-path — keeps existing Postgres, adds pod write service to sync data to pods |
+| **Custom vocabulary** | `sa:` prefix at `https://vocab.selfactual.ai/`. Static file for POC, proper ontology for production |
+
+### Remaining Design Questions
+
+1. **Dual-pod provisioning flow**: When a user signs up, how do we automatically create both pods? CSS API, custom registration wrapper, or manual for POC?
+2. **User identity mapping**: How does the pod WebID relate to AST's user ID and Auth0 sub? Need a mapping strategy.
+3. **Flow attributes structure**: The Postgres `flowAttributes.attributes` column is JSONB with unknown internal structure. Need to inspect actual data.
+4. **Workshop step data**: `workshopStepData` stores arbitrary JSONB per step. Decide what (if any) goes into pods.
 
 ## What CSS Gives Us Out of the Box
 
 Community Solid Server provides:
 - **Pod provisioning**: Users can create pods via the web UI or API
-- **Solid-OIDC authentication**: Built-in identity provider with WebID
+- **Solid-OIDC authentication**: Built-in identity provider with WebID, client credentials for programmatic access
 - **Web Access Control (WAC)**: Fine-grained ACLs on resources and containers
 - **LDP (Linked Data Platform)**: Standard REST API for reading/writing RDF resources
 - **Content negotiation**: Serve data as Turtle, JSON-LD, etc.
 - **Notifications**: WebSocket-based live updates when resources change
 
-What we will likely need to build on top:
+What we need to build on top:
 - Automated dual-pod provisioning on signup
-- A sharing/consent UI for the user to manage what goes into the sub pod
-- A demo client app that reads from the sub pod
-- Possibly a middleware service that handles the master-to-sub data flow
+- AST pod write service (Postgres → RDF → pod)
+- Atlas pod-native frontend
+- Vault Viewer demo app
+- WAC ACL configuration for the sub pod sharing model
+- Coaching Mentor app (future)
+
+## App Ecosystem
+
+See `app-ecosystem.md` for the full ecosystem doc. Summary:
+
+**Data Producers:**
+1. **AllStarTeams (AST)** — Live microcourse. Primary POC producer. DB + pod sync.
+2. **Atlas** — Assessment aggregator. Pod-native (no separate DB). Second POC producer.
+3. **Imaginal Agility (IA)** — Future microcourse. Same integration pattern as AST.
+
+**Data Consumers:**
+4. **Coaching Mentor** — AI coaching companion with "Working With Me" document. Concept stage.
+5. **Vault Viewer** — POC demo app. Reads both pods to demonstrate access control.
+6. **Future third-party integrations** — Team dynamics, HR tools, coaching platforms.
 
 ## Cost
 
@@ -152,7 +220,7 @@ What we will likely need to build on top:
 - Data transfer: negligible at prototype scale
 - Domain: existing
 
-## Key Technical Decisions Made
+## Key Technical Decisions
 
 1. **Community Solid Server** over Node Solid Server (NSS) — CSS is actively maintained, modular, and better documented
 2. **Single EC2 instance** — simplicity over HA; fine for pre-seed demo
@@ -162,3 +230,20 @@ What we will likely need to build on top:
 6. **File-based storage** (`config/file.json`) — pod data stored as files on disk; simple, inspectable, easy to back up
 7. **Terraform** — infrastructure is reproducible and versioned, even for a single instance
 8. **External DNS** — domain is managed outside AWS, only an A record needed
+9. **Shared Auth0 tenant** — single identity across all apps in the ecosystem
+10. **Atlas is pod-native** — no separate backend database; reads/writes directly to pods
+11. **@inrupt/solid-client** — official Solid client library for Node.js, used for pod operations
+12. **Client credentials auth** — CSS account API → client credentials → Solid-OIDC DPoP tokens for programmatic access
+
+## Documentation Map
+
+| Document | Purpose |
+|----------|---------|
+| `docs/project-context.md` | This file — system overview, architecture, current status |
+| `docs/trust-architecture.md` | Data fiduciary model — custody, portability, encryption roadmap, business model alignment |
+| `docs/app-ecosystem.md` | App roles, data flows, Auth0 decision, POC scope |
+| `docs/pod-resources-sketch.md` | RDF resource design — container layouts, Turtle examples, ACL sketch |
+| `docs/ops.md` | Operations reference — SSH, Docker, Nginx, CSS commands |
+| `docs/progress-log.md` | Chronological log of what was built and validated |
+| `TODO.md` | Task tracking with completion status |
+| `scripts/` | Validation scripts and tooling (see `scripts/README.md`) |

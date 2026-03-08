@@ -5,5 +5,9 @@ infra/*.tfstate.backup
 infra/.terraform.lock.hcl
 infra/terraform.tfvars
 
+# Services
+services/*/.env
+node_modules/
+
 # OS
 .DS_Store

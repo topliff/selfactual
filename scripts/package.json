@@ -1,0 +1,15 @@
+{
+  "name": "selfactual-pod-validation",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "validate": "node validate-pod.mjs",
+    "create-credentials": "node create-credentials.mjs"
+  },
+  "dependencies": {
+    "@inrupt/solid-client": "^2.1.0",
+    "@inrupt/solid-client-authn-node": "^2.1.0",
+    "@inrupt/vocab-common-rdf": "^1.0.5"
+  }
+}
