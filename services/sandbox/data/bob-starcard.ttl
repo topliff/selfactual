@@ -1,0 +1,17 @@
+@prefix sa:      <https://vocab.selfactual.ai/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+<>
+    a sa:Assessment, sa:StarCard ;
+    dcterms:created     "2026-02-20T14:00:00Z"^^xsd:dateTime ;
+    dcterms:modified    "2026-02-20T14:00:00Z"^^xsd:dateTime ;
+    sa:framework        <https://vocab.selfactual.ai/frameworks/ast> ;
+    sa:sourceApp        "AllStarTeams" ;
+    sa:sourceVersion    "2.1.7" ;
+    sa:thinking         88 ;
+    sa:acting           60 ;
+    sa:feeling          55 ;
+    sa:planning         79 ;
+    sa:dominantQuadrant "thinking" ;
+    sa:profileShape     "Strategist" .

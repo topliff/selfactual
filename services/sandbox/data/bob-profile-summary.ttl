@@ -1,0 +1,10 @@
+@prefix sa:      <https://vocab.selfactual.ai/> .
+@prefix schema:  <http://schema.org/> .
+@prefix foaf:    <http://xmlns.com/foaf/0.1/> .
+
+<>
+    a foaf:Person, sa:SharedProfile ;
+    foaf:name           "Bob Nakamura" ;
+    schema:jobTitle     "Engineering Lead" ;
+    schema:worksFor     "Acme Corp" ;
+    sa:hasAssessment    <https://vaults.selfactual.ai/sandbox-bob/sub/assessments/starcard> .

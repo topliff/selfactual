@@ -1,0 +1,11 @@
+@prefix sa:      <https://vocab.selfactual.ai/> .
+@prefix schema:  <http://schema.org/> .
+@prefix foaf:    <http://xmlns.com/foaf/0.1/> .
+
+<>
+    a foaf:Person, sa:SharedProfile ;
+    foaf:name           "Cara Osei" ;
+    schema:jobTitle     "Design Director" ;
+    schema:worksFor     "Acme Corp" ;
+    sa:hasAssessment    <https://vaults.selfactual.ai/sandbox-cara/sub/assessments/starcard> ;
+    sa:hasAssessment    <https://vaults.selfactual.ai/sandbox-cara/sub/assessments/flow-attributes> .

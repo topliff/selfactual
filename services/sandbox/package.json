@@ -1,0 +1,15 @@
+{
+  "name": "selfactual-sandbox",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "provision": "node provision-sandbox.mjs",
+    "provision:with-partner": "node provision-sandbox.mjs --create-partner-account"
+  },
+  "dependencies": {
+    "@inrupt/solid-client": "^2.1.0",
+    "@inrupt/solid-client-authn-node": "^2.1.0",
+    "dotenv": "^16.3.0"
+  }
+}

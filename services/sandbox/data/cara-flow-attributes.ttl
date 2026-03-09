@@ -1,0 +1,26 @@
+@prefix sa:      <https://vocab.selfactual.ai/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+<>
+    a sa:Assessment, sa:FlowProfile ;
+    dcterms:created     "2026-02-22T09:30:00Z"^^xsd:dateTime ;
+    sa:framework        <https://vocab.selfactual.ai/frameworks/ast> ;
+    sa:sourceApp        "AllStarTeams" ;
+    sa:sourceVersion    "2.1.7" ;
+    sa:flowAttribute [
+        sa:name         "Rapid Prototyping" ;
+        sa:score        9 ;
+        sa:category     "generative"
+    ] ;
+    sa:flowAttribute [
+        sa:name         "Team Momentum" ;
+        sa:score        8 ;
+        sa:category     "social"
+    ] ;
+    sa:flowAttribute [
+        sa:name         "Decisive Action" ;
+        sa:score        9 ;
+        sa:category     "cognitive"
+    ] ;
+    sa:relatedAssessment <https://vaults.selfactual.ai/sandbox-cara/sub/assessments/starcard> .
