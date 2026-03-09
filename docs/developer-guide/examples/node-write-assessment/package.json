@@ -1,0 +1,15 @@
+{
+  "name": "selfactual-write-assessment-example",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Example: Write an assessment resource to a SelfActual sub pod",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@inrupt/solid-client": "^2.1.0",
+    "@inrupt/solid-client-authn-node": "^2.2.0",
+    "dotenv": "^16.4.0"
+  }
+}

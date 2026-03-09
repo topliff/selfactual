@@ -1,0 +1,21 @@
+@prefix sa:      <https://vocab.selfactual.ai/> .
+@prefix schema:  <http://schema.org/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+<>
+    a sa:Team ;
+    schema:name         "Engineering" ;
+    dcterms:created     "2026-03-01T09:00:00Z"^^xsd:dateTime ;
+    sa:hasMember [
+        sa:memberName   "Alice Torres" ;
+        sa:subPod       <https://vaults.selfactual.ai/sandbox-alice/sub/>
+    ] ;
+    sa:hasMember [
+        sa:memberName   "Bob Nakamura" ;
+        sa:subPod       <https://vaults.selfactual.ai/sandbox-bob/sub/>
+    ] ;
+    sa:hasMember [
+        sa:memberName   "Cara Osei" ;
+        sa:subPod       <https://vaults.selfactual.ai/sandbox-cara/sub/>
+    ] .

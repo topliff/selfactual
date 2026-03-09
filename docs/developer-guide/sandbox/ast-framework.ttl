@@ -1,0 +1,35 @@
+@prefix sa:      <https://vocab.selfactual.ai/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+
+<>
+    a sa:Framework ;
+    dcterms:title       "AllStarTeams Assessment Framework" ;
+    dcterms:publisher   "Heliotrope Imaginal" ;
+    sa:version          "2.1.7" ;
+    sa:hasDimension [
+        sa:dimensionId      "thinking" ;
+        rdfs:label          "Thinking" ;
+        sa:description      "Analytical and strategic reasoning — how you process information, solve problems, and make decisions." ;
+        sa:scoreRange       "0-100"
+    ] ;
+    sa:hasDimension [
+        sa:dimensionId      "acting" ;
+        rdfs:label          "Acting" ;
+        sa:description      "Execution and initiative — how you take action, drive results, and maintain momentum." ;
+        sa:scoreRange       "0-100"
+    ] ;
+    sa:hasDimension [
+        sa:dimensionId      "feeling" ;
+        rdfs:label          "Feeling" ;
+        sa:description      "Emotional intelligence and connection — how you relate to others, read the room, and build trust." ;
+        sa:scoreRange       "0-100"
+    ] ;
+    sa:hasDimension [
+        sa:dimensionId      "planning" ;
+        rdfs:label          "Planning" ;
+        sa:description      "Organization and foresight — how you structure work, anticipate needs, and manage complexity." ;
+        sa:scoreRange       "0-100"
+    ] ;
+    sa:profileShapes    "Connector, Strategist, Executor, Architect, Catalyst, Integrator" ;
+    sa:methodology      "Star Card assessment using four-quadrant self-evaluation with guided reflection." .

@@ -1,0 +1,11 @@
+@prefix sa:      <https://vocab.selfactual.ai/> .
+@prefix schema:  <http://schema.org/> .
+@prefix foaf:    <http://xmlns.com/foaf/0.1/> .
+
+<>
+    a foaf:Person, sa:SharedProfile ;
+    foaf:name           "Alice Torres" ;
+    schema:jobTitle     "Product Manager" ;
+    schema:worksFor     "Acme Corp" ;
+    sa:hasAssessment    <https://vaults.selfactual.ai/sandbox-alice/sub/assessments/starcard> ;
+    sa:hasAssessment    <https://vaults.selfactual.ai/sandbox-alice/sub/assessments/flow-attributes> .

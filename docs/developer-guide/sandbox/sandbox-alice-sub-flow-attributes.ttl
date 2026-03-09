@@ -1,0 +1,26 @@
+@prefix sa:      <https://vocab.selfactual.ai/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+<>
+    a sa:Assessment, sa:FlowProfile ;
+    dcterms:created     "2026-02-15T11:30:00Z"^^xsd:dateTime ;
+    sa:framework        <https://vocab.selfactual.ai/frameworks/ast> ;
+    sa:sourceApp        "AllStarTeams" ;
+    sa:sourceVersion    "2.1.7" ;
+    sa:flowAttribute [
+        sa:name         "Deep Focus" ;
+        sa:score        8 ;
+        sa:category     "cognitive"
+    ] ;
+    sa:flowAttribute [
+        sa:name         "Collaborative Energy" ;
+        sa:score        7 ;
+        sa:category     "social"
+    ] ;
+    sa:flowAttribute [
+        sa:name         "Creative Exploration" ;
+        sa:score        9 ;
+        sa:category     "generative"
+    ] ;
+    sa:relatedAssessment <https://vaults.selfactual.ai/sandbox-alice/sub/assessments/starcard> .

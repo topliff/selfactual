@@ -1,0 +1,453 @@
+@prefix sa:      <https://vocab.selfactual.ai/> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf:    <http://xmlns.com/foaf/0.1/> .
+@prefix schema:  <http://schema.org/> .
+
+# =============================================================================
+# Ontology Declaration
+# =============================================================================
+
+<https://vocab.selfactual.ai/>
+    a owl:Ontology ;
+    dcterms:title       "SelfActual Vocabulary" ;
+    dcterms:description "Classes and properties for personal data stored in SelfActual Solid Pods." ;
+    dcterms:publisher   "SelfActual" ;
+    dcterms:created     "2026-03-09"^^xsd:date ;
+    owl:versionInfo     "0.1.0" .
+
+# =============================================================================
+# Classes — Core
+# =============================================================================
+
+sa:VaultOwner
+    a owl:Class ;
+    rdfs:subClassOf foaf:Person ;
+    rdfs:label      "Vault Owner" ;
+    rdfs:comment    "A user who owns a SelfActual vault (master + sub pod)." .
+
+sa:SharedProfile
+    a owl:Class ;
+    rdfs:subClassOf foaf:Person ;
+    rdfs:label      "Shared Profile" ;
+    rdfs:comment    "A curated, shareable subset of a user's profile. Lives in the sub pod." .
+
+sa:Assessment
+    a owl:Class ;
+    rdfs:label      "Assessment" ;
+    rdfs:comment    "Base class for all personal development assessments." .
+
+sa:StarCard
+    a owl:Class ;
+    rdfs:subClassOf sa:Assessment ;
+    rdfs:label      "Star Card" ;
+    rdfs:comment    "A four-quadrant assessment measuring Thinking, Acting, Feeling, and Planning." .
+
+sa:FlowProfile
+    a owl:Class ;
+    rdfs:subClassOf sa:Assessment ;
+    rdfs:label      "Flow Profile" ;
+    rdfs:comment    "An assessment of flow attributes across cognitive, social, and generative categories." .
+
+sa:Reflection
+    a owl:Class ;
+    rdfs:label      "Reflection" ;
+    rdfs:comment    "A user's guided reflection on a specific assessment dimension. Master pod only." .
+
+sa:FinalInsight
+    a owl:Class ;
+    rdfs:subClassOf sa:Reflection ;
+    rdfs:label      "Final Insight" ;
+    rdfs:comment    "A synthesis reflection that draws on multiple assessments and reflections." .
+
+sa:Framework
+    a owl:Class ;
+    rdfs:label      "Framework" ;
+    rdfs:comment    "Assessment framework metadata — defines dimensions, score ranges, and methodology." .
+
+# =============================================================================
+# Classes — Organization
+# =============================================================================
+
+sa:OrgVault
+    a owl:Class ;
+    rdfs:label      "Organization Vault" ;
+    rdfs:comment    "An organization's Solid Pod containing shared context (teams, values, integrations)." .
+
+sa:Team
+    a owl:Class ;
+    rdfs:label      "Team" ;
+    rdfs:comment    "A team within an organization, with links to member sub pods." .
+
+sa:OrgValues
+    a owl:Class ;
+    rdfs:label      "Organization Values" ;
+    rdfs:comment    "Mission statement and core values for an organization." .
+
+sa:Integration
+    a owl:Class ;
+    rdfs:label      "Integration" ;
+    rdfs:comment    "A connection to an external system of record (e.g., Workday)." .
+
+# =============================================================================
+# Properties — Identity & Profile
+# =============================================================================
+
+sa:vaultCreated
+    a owl:DatatypeProperty ;
+    rdfs:domain     sa:VaultOwner ;
+    rdfs:range      xsd:dateTime ;
+    rdfs:label      "vault created" ;
+    rdfs:comment    "Datetime when the user's vault was provisioned." .
+
+sa:masterPod
+    a owl:ObjectProperty ;
+    rdfs:domain     sa:VaultOwner ;
+    rdfs:label      "master pod" ;
+    rdfs:comment    "URI of the user's master (private) pod." .
+
+sa:subPod
+    a owl:ObjectProperty ;
+    rdfs:domain     sa:VaultOwner ;
+    rdfs:label      "sub pod" ;
+    rdfs:comment    "URI of the user's sub (sharing) pod." .
+
+sa:hasAssessment
+    a owl:ObjectProperty ;
+    rdfs:domain     sa:SharedProfile ;
+    rdfs:label      "has assessment" ;
+    rdfs:comment    "Link to an assessment resource in the sub pod." .
+
+# =============================================================================
+# Properties — Assessment
+# =============================================================================
+
+sa:framework
+    a owl:ObjectProperty ;
+    rdfs:domain     sa:Assessment ;
+    rdfs:label      "framework" ;
+    rdfs:comment    "Link to the assessment framework this data was produced under." .
+
+sa:sourceApp
+    a owl:DatatypeProperty ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "source application" ;
+    rdfs:comment    "Name of the application that created this resource." .
+
+sa:sourceVersion
+    a owl:DatatypeProperty ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "source version" ;
+    rdfs:comment    "Version string of the application that created this resource." .
+
+sa:relatedAssessment
+    a owl:ObjectProperty ;
+    rdfs:domain     sa:Assessment ;
+    rdfs:range      sa:Assessment ;
+    rdfs:label      "related assessment" ;
+    rdfs:comment    "Link to another assessment that relates to this one." .
+
+# =============================================================================
+# Properties — Star Card
+# =============================================================================
+
+sa:thinking
+    a owl:DatatypeProperty ;
+    rdfs:domain     sa:StarCard ;
+    rdfs:range      xsd:integer ;
+    rdfs:label      "thinking" ;
+    rdfs:comment    "Thinking quadrant score (0-100)." .
+
+sa:acting
+    a owl:DatatypeProperty ;
+    rdfs:domain     sa:StarCard ;
+    rdfs:range      xsd:integer ;
+    rdfs:label      "acting" ;
+    rdfs:comment    "Acting quadrant score (0-100)." .
+
+sa:feeling
+    a owl:DatatypeProperty ;
+    rdfs:domain     sa:StarCard ;
+    rdfs:range      xsd:integer ;
+    rdfs:label      "feeling" ;
+    rdfs:comment    "Feeling quadrant score (0-100)." .
+
+sa:planning
+    a owl:DatatypeProperty ;
+    rdfs:domain     sa:StarCard ;
+    rdfs:range      xsd:integer ;
+    rdfs:label      "planning" ;
+    rdfs:comment    "Planning quadrant score (0-100)." .
+
+sa:dominantQuadrant
+    a owl:DatatypeProperty ;
+    rdfs:domain     sa:StarCard ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "dominant quadrant" ;
+    rdfs:comment    "The quadrant with the highest score." .
+
+sa:profileShape
+    a owl:DatatypeProperty ;
+    rdfs:domain     sa:StarCard ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "profile shape" ;
+    rdfs:comment    "Derived profile type (e.g., Connector, Strategist, Executor, Architect, Catalyst, Integrator)." .
+
+sa:hasReflections
+    a owl:ObjectProperty ;
+    rdfs:domain     sa:StarCard ;
+    rdfs:label      "has reflections" ;
+    rdfs:comment    "Link to the reflections container. Present only in master pod." .
+
+# =============================================================================
+# Properties — Flow Attributes
+# =============================================================================
+
+sa:flowAttribute
+    a owl:ObjectProperty ;
+    rdfs:domain     sa:FlowProfile ;
+    rdfs:label      "flow attribute" ;
+    rdfs:comment    "A single flow attribute with name, score, and category." .
+
+sa:name
+    a owl:DatatypeProperty ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "name" ;
+    rdfs:comment    "Name of a flow attribute or other named entity." .
+
+sa:score
+    a owl:DatatypeProperty ;
+    rdfs:range      xsd:integer ;
+    rdfs:label      "score" ;
+    rdfs:comment    "Numeric score for a flow attribute." .
+
+sa:category
+    a owl:DatatypeProperty ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "category" ;
+    rdfs:comment    "Category classification (e.g., cognitive, social, generative)." .
+
+# =============================================================================
+# Properties — Reflection
+# =============================================================================
+
+sa:reflectionSet
+    a owl:DatatypeProperty ;
+    rdfs:domain     sa:Reflection ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "reflection set" ;
+    rdfs:comment    "Which set this reflection belongs to (e.g., strength-reflections)." .
+
+sa:reflectionDimension
+    a owl:DatatypeProperty ;
+    rdfs:domain     sa:Reflection ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "reflection dimension" ;
+    rdfs:comment    "Which assessment dimension this reflection addresses." .
+
+sa:aboutAssessment
+    a owl:ObjectProperty ;
+    rdfs:domain     sa:Reflection ;
+    rdfs:range      sa:Assessment ;
+    rdfs:label      "about assessment" ;
+    rdfs:comment    "The assessment this reflection relates to." .
+
+sa:aboutScore
+    a owl:DatatypeProperty ;
+    rdfs:domain     sa:Reflection ;
+    rdfs:range      xsd:integer ;
+    rdfs:label      "about score" ;
+    rdfs:comment    "The specific score being reflected on." .
+
+sa:dimensionLabel
+    a owl:DatatypeProperty ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "dimension label" ;
+    rdfs:comment    "Human-readable name for a dimension." .
+
+sa:dimensionDescription
+    a owl:DatatypeProperty ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "dimension description" ;
+    rdfs:comment    "Description of what a dimension measures." .
+
+sa:prompt
+    a owl:DatatypeProperty ;
+    rdfs:domain     sa:Reflection ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "prompt" ;
+    rdfs:comment    "The prompt text that guided this reflection." .
+
+sa:response
+    a owl:DatatypeProperty ;
+    rdfs:domain     sa:Reflection ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "response" ;
+    rdfs:comment    "The user's reflection response text." .
+
+sa:completed
+    a owl:DatatypeProperty ;
+    rdfs:domain     sa:Reflection ;
+    rdfs:range      xsd:boolean ;
+    rdfs:label      "completed" ;
+    rdfs:comment    "Whether this reflection has been completed." .
+
+sa:synthesizes
+    a owl:ObjectProperty ;
+    rdfs:domain     sa:FinalInsight ;
+    rdfs:label      "synthesizes" ;
+    rdfs:comment    "Link to a resource this final insight draws upon." .
+
+sa:insight
+    a owl:DatatypeProperty ;
+    rdfs:domain     sa:FinalInsight ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "insight" ;
+    rdfs:comment    "The synthesis insight text." .
+
+# =============================================================================
+# Properties — Framework
+# =============================================================================
+
+sa:version
+    a owl:DatatypeProperty ;
+    rdfs:domain     sa:Framework ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "version" ;
+    rdfs:comment    "Version string for the framework." .
+
+sa:hasDimension
+    a owl:ObjectProperty ;
+    rdfs:domain     sa:Framework ;
+    rdfs:label      "has dimension" ;
+    rdfs:comment    "A dimension definition within this framework." .
+
+sa:dimensionId
+    a owl:DatatypeProperty ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "dimension ID" ;
+    rdfs:comment    "Machine-readable identifier for a dimension." .
+
+sa:description
+    a owl:DatatypeProperty ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "description" ;
+    rdfs:comment    "Human-readable description." .
+
+sa:scoreRange
+    a owl:DatatypeProperty ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "score range" ;
+    rdfs:comment    "Valid range for scores in this dimension (e.g., 0-100)." .
+
+sa:profileShapes
+    a owl:DatatypeProperty ;
+    rdfs:domain     sa:Framework ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "profile shapes" ;
+    rdfs:comment    "Comma-separated list of possible profile shapes." .
+
+sa:methodology
+    a owl:DatatypeProperty ;
+    rdfs:domain     sa:Framework ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "methodology" ;
+    rdfs:comment    "Description of the assessment methodology." .
+
+# =============================================================================
+# Properties — Organization
+# =============================================================================
+
+sa:hasTeam
+    a owl:ObjectProperty ;
+    rdfs:domain     sa:OrgVault ;
+    rdfs:range      sa:Team ;
+    rdfs:label      "has team" ;
+    rdfs:comment    "Link to a team within this organization." .
+
+sa:hasMember
+    a owl:ObjectProperty ;
+    rdfs:domain     sa:Team ;
+    rdfs:label      "has member" ;
+    rdfs:comment    "A member of this team (blank node with memberName and subPod)." .
+
+sa:memberName
+    a owl:DatatypeProperty ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "member name" ;
+    rdfs:comment    "Display name of a team member." .
+
+sa:mission
+    a owl:DatatypeProperty ;
+    rdfs:domain     sa:OrgValues ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "mission" ;
+    rdfs:comment    "Organization mission statement." .
+
+sa:value
+    a owl:DatatypeProperty ;
+    rdfs:domain     sa:OrgValues ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "value" ;
+    rdfs:comment    "An organizational value (repeatable)." .
+
+sa:system
+    a owl:DatatypeProperty ;
+    rdfs:domain     sa:Integration ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "system" ;
+    rdfs:comment    "Name of the external system." .
+
+sa:dataTypes
+    a owl:DatatypeProperty ;
+    rdfs:domain     sa:Integration ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "data types" ;
+    rdfs:comment    "Types of data available from this integration." .
+
+sa:status
+    a owl:DatatypeProperty ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "status" ;
+    rdfs:comment    "Current status (e.g., planned, active, retracted)." .
+
+# =============================================================================
+# Properties — Provenance
+# =============================================================================
+
+sa:writeType
+    a owl:DatatypeProperty ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "write type" ;
+    rdfs:comment    "Category of write operation (e.g., assessment-sync, reflection-sync)." .
+
+sa:triggeredBy
+    a owl:DatatypeProperty ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "triggered by" ;
+    rdfs:comment    "What caused this write (e.g., workshop-completion, user-action)." .
+
+sa:masterOnly
+    a owl:DatatypeProperty ;
+    rdfs:range      xsd:boolean ;
+    rdfs:label      "master only" ;
+    rdfs:comment    "Whether this write was to the master pod only (not mirrored to sub)." .
+
+sa:retractedReason
+    a owl:DatatypeProperty ;
+    rdfs:range      xsd:string ;
+    rdfs:label      "retracted reason" ;
+    rdfs:comment    "Explanation for why a resource was retracted." .
+
+sa:supersededBy
+    a owl:ObjectProperty ;
+    rdfs:label      "superseded by" ;
+    rdfs:comment    "Link to the resource that replaces this one." .
+
+sa:previousVersion
+    a owl:ObjectProperty ;
+    rdfs:label      "previous version" ;
+    rdfs:comment    "Link to the previous version of this resource." .
